@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
 
 from app.domain.tags.models import Tag
@@ -8,6 +9,11 @@ __all__ = ["TagCreateDTO", "TagDTO", "TagUpdateDTO"]
 
 # database model
 
+@dataclass
+class TagWithSomething:
+    tag: Tag
+    prop1: bool
+    prop2: str
 
 class TagDTO(SQLAlchemyDTO[Tag]):
     config = dto.config(max_nested_depth=0)

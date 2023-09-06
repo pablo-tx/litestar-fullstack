@@ -71,5 +71,7 @@ auth = OAuth2PasswordBearerAuth[User](
         constants.SYSTEM_HEALTH,
         urls.ACCOUNT_LOGIN,
         urls.ACCOUNT_REGISTER,
+        urls.TAG_LIST,
+        urls.TAG_CREATE
     ],
 )

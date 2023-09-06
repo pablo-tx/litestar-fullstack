@@ -9,7 +9,7 @@ from litestar.params import Dependency, Parameter
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tags.dependencies import provide_tags_service
-from app.domain.tags.dtos import TagCreateDTO, TagDTO
+from app.domain.tags.dtos import TagCreateDTO, TagDTO, TagWithSomething
 from app.lib import log
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ logger = log.get_logger()
 class TagController(Controller):
     """Handles the interactions within the Tag objects."""
 
-    guards = [requires_active_user]
+    guards = []
     dependencies = {"tags_service": Provide(provide_tags_service)}
     tags = ["Tags"]
     return_dto = TagDTO
@@ -43,13 +43,14 @@ class TagController(Controller):
         summary="List Tags",
         description="Retrieve the tags.",
         path=urls.TAG_LIST,
+        return_dto=None
     )
     async def list_tags(
         self, tags_service: TagService, filters: list[FilterTypes] = Dependency(skip_validation=True)
-    ) -> OffsetPagination[Tag]:
+    ) -> list[TagWithSomething]:
         """List tags."""
         results, total = await tags_service.list_and_count(*filters)
-        return tags_service.to_dto(results, total, *filters)
+        return [TagWithSomething(tag=tag, prop1=True, prop2="1") for tag in results]
 
     @get(
         operation_id="GetTag",
@@ -75,7 +76,7 @@ class TagController(Controller):
         summary="Create a new tag.",
         cache_control=None,
         description="A tag is a place where you can upload and group collections of databases.",
-        guards=[requires_superuser],
+        guards=[],
         path=urls.TAG_CREATE,
         dto=TagCreateDTO,
     )
